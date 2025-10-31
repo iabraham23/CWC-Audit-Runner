@@ -317,12 +317,6 @@
                 <div class="help-text">Label for the bottom highlight section</div>
             </div>
 
-            <div class="form-group">
-                <label for="sheetId">Google Sheet ID</label>
-                <input type="text" id="sheetId" value="1dfKeAYcfRvxrEu-ZQHy-PVL8_6hcyjq2BD5KE50cxVY">
-                <div class="help-text">Google Sheet ID (default provided)</div>
-            </div>
-
             <button class="btn btn-primary" id="generateBtn" onclick="generateAudit()">
                 Generate Audit Report
             </button>
@@ -431,7 +425,7 @@
             const headerDate = document.getElementById('headerDate').value.trim();
             const compositeLabel = document.getElementById('compositeLabel').value.trim();
             const setLabel = document.getElementById('bottomHighlightLabel').value.trim();
-            const sheetId = document.getElementById('sheetId').value.trim();
+            const sheetId = '1dfKeAYcfRvxrEu-ZQHy-PVL8_6hcyjq2BD5KE50cxVY'; // Hardcoded
 
             if (!worksheetName || !headerDate || !compositeLabel || !setLabel) {
                 showStatus('Please fill in all required fields', 'error');
