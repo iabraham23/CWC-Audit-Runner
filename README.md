@@ -1,3 +1,13 @@
 [![Netlify Status](https://api.netlify.com/api/v1/badges/61bd22ab-a197-4b8e-8022-42c493b1b4d2/deploy-status)](https://app.netlify.com/projects/cwc-audit-runner/deploys) 
 
-This repo manages the live website to run composities for CWC Advisors
+This repo manages the live website to run composite automations for CWC Advisors 
+
+Input composite CSV's from Orion and download an excel sheet of a CWC style composite
+Required CSV columns: 
+- Included
+- Reigstration Name
+- Beginning Value
+- Ending Value
+- Gross Performance %
+- Account Number
+- Account Start Date 
