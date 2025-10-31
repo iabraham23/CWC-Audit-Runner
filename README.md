@@ -4,7 +4,7 @@ This repo manages the live website to run composite automations for CWC Advisors
 
 Input composite CSV's from Orion and download an excel sheet of a CWC style composite
 Required CSV columns: 
-- Included
+- Included -- Bool, whether or not this data point is included in this composite 
 - Reigstration Name
 - Beginning Value
 - Ending Value
