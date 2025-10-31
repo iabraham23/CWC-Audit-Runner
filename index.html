@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CWC Audit Interface</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h1 {
+            color: #1a202c;
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: #718096;
+            margin-bottom: 2rem;
+        }
+
+        .upload-zone {
+            border: 3px dashed #cbd5e0;
+            border-radius: 8px;
+            padding: 3rem;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            background: #f7fafc;
+        }
+
+        .upload-zone:hover {
+            border-color: #667eea;
+            background: #edf2f7;
+        }
+
+        .upload-zone.dragover {
+            border-color: #667eea;
+            background: #e6fffa;
+        }
+
+        .upload-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+        }
+
+        .file-info {
+            background: #edf2f7;
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            color: #2d3748;
+            margin-bottom: 0.5rem;
+        }
+
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .help-text {
+            font-size: 0.875rem;
+            color: #718096;
+            margin-top: 0.25rem;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            background: #cbd5e0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: #e53e3e;
+            color: white;
+            margin-top: 0.5rem;
+        }
+
+        .btn-secondary:hover {
+            background: #c53030;
+        }
+
+        .status {
+            padding: 1rem;
+            border-radius: 8px;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .status-info {
+            background: #bee3f8;
+            color: #2c5282;
+        }
+
+        .status-success {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-error {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .csv-preview {
+            background: #1a202c;
+            color: #68d391;
+            padding: 1rem;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.875rem;
+            overflow-x: auto;
+            margin-top: 1rem;
+            white-space: pre;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="card">
+            <h1>📊 CWC Audit Interface</h1>
+            <p class="subtitle">Upload your CSV file and generate formatted audit reports</p>
+        </div>
+
+        <!-- File Upload -->
+        <div class="card">
+            <h2 style="margin-bottom: 1rem;">1. Upload CSV File</h2>
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon">📁</div>
+                <p style="font-size: 1.1rem; margin-bottom: 0.5rem;">Click to upload or drag and drop</p>
+                <p style="color: #718096; font-size: 0.9rem;">CSV files only</p>
+                <input type="file" id="fileInput" accept=".csv" style="display: none;">
+            </div>
+            
+            <div id="fileInfo" class="file-info hidden">
+                <div>
+                    <strong id="fileName"></strong>
+                    <div style="font-size: 0.875rem; color: #718096;" id="fileSize"></div>
+                </div>
+                <button class="btn-secondary" onclick="clearFile()" style="padding: 0.5rem 1rem; width: auto;">Clear</button>
+            </div>
+
+            <div id="csvPreview" class="csv-preview hidden"></div>
+        </div>
+
+        <!-- Parameters Form -->
+        <div class="card">
+            <h2 style="margin-bottom: 1.5rem;">2. Audit Parameters</h2>
+            
+            <div class="form-group">
+                <label for="worksheetName">Worksheet Name *</label>
+                <input type="text" id="worksheetName" placeholder="e.g., Audit Practice Cloud Ver">
+                <div class="help-text">Name for the generated worksheet</div>
+            </div>
+
+            <div class="form-group">
+                <label for="headerDate">Header Date *</label>
+                <input type="text" id="headerDate" placeholder="e.g., October 30, 2025">
+                <div class="help-text">Date to display in the report header</div>
+            </div>
+
+            <div class="form-group">
+                <label for="compositeLabel">Composite Label *</label>
+                <input type="text" id="compositeLabel" placeholder="e.g., Large Cap Diversified Composite">
+                <div class="help-text">Label for the composite</div>
+            </div>
+
+            <div class="form-group">
+                <label for="setLabel">Set Label *</label>
+                <input type="text" id="setLabel" placeholder="e.g., Set: Small-Cap Diversified Composite">
+                <div class="help-text">Label for the set</div>
+            </div>
+
+            <div class="form-group">
+                <label for="sheetId">Google Sheet ID</label>
+                <input type="text" id="sheetId" value="1dfKeAYcfRvxrEu-ZQHy-PVL8_6hcyjq2BD5KE50cxVY">
+                <div class="help-text">Google Sheet ID (default provided)</div>
+            </div>
+
+            <button class="btn btn-primary" id="generateBtn" onclick="generateAudit()">
+                Generate Audit Report
+            </button>
+
+            <div id="status" class="hidden"></div>
+        </div>
+    </div>
+
+    <script>
+        const API_URL = 'https://cwc-audit-api-729567585923.us-central1.run.app';
+        const API_TOKEN = 'CWC_Audit_Key_1';
+        
+        let csvFile = null;
+
+        // Upload zone interactions
+        const uploadZone = document.getElementById('uploadZone');
+        const fileInput = document.getElementById('fileInput');
+
+        uploadZone.addEventListener('click', () => fileInput.click());
+
+        uploadZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadZone.classList.add('dragover');
+        });
+
+        uploadZone.addEventListener('dragleave', () => {
+            uploadZone.classList.remove('dragover');
+        });
+
+        uploadZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadZone.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type === 'text/csv') {
+                handleFile(file);
+            } else {
+                showStatus('Please upload a valid CSV file', 'error');
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+
+        function handleFile(file) {
+            csvFile = file;
+            
+            // Show file info
+            document.getElementById('fileName').textContent = file.name;
+            document.getElementById('fileSize').textContent = `${(file.size / 1024).toFixed(1)} KB`;
+            document.getElementById('fileInfo').classList.remove('hidden');
+
+            // Preview CSV
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const text = e.target.result;
+                const lines = text.split('\n').slice(0, 6);
+                document.getElementById('csvPreview').textContent = lines.join('\n') + '\n...';
+                document.getElementById('csvPreview').classList.remove('hidden');
+            };
+            reader.readAsText(file);
+
+            hideStatus();
+        }
+
+        function clearFile() {
+            csvFile = null;
+            fileInput.value = '';
+            document.getElementById('fileInfo').classList.add('hidden');
+            document.getElementById('csvPreview').classList.add('hidden');
+            hideStatus();
+        }
+
+        function showStatus(message, type) {
+            const statusDiv = document.getElementById('status');
+            statusDiv.className = `status status-${type}`;
+            
+            let icon = '';
+            if (type === 'info') icon = '<div class="spinner"></div>';
+            else if (type === 'success') icon = '✓';
+            else if (type === 'error') icon = '✗';
+            
+            statusDiv.innerHTML = `${icon} <span>${message}</span>`;
+            statusDiv.classList.remove('hidden');
+        }
+
+        function hideStatus() {
+            document.getElementById('status').classList.add('hidden');
+        }
+
+        async function generateAudit() {
+            // Validation
+            if (!csvFile) {
+                showStatus('Please upload a CSV file', 'error');
+                return;
+            }
+
+            const worksheetName = document.getElementById('worksheetName').value.trim();
+            const headerDate = document.getElementById('headerDate').value.trim();
+            const compositeLabel = document.getElementById('compositeLabel').value.trim();
+            const setLabel = document.getElementById('setLabel').value.trim();
+            const sheetId = document.getElementById('sheetId').value.trim();
+
+            if (!worksheetName || !headerDate || !compositeLabel || !setLabel) {
+                showStatus('Please fill in all required fields', 'error');
+                return;
+            }
+
+            // Disable button
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = true;
+            btn.textContent = 'Processing...';
+
+            try {
+                showStatus('Converting CSV to base64...', 'info');
+
+                // Convert CSV to base64
+                const base64 = await fileToBase64(csvFile);
+
+                showStatus('Sending request to API...', 'info');
+
+                // Call API
+                const response = await fetch(`${API_URL}/audit/inline`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_TOKEN}`
+                    },
+                    body: JSON.stringify({
+                        csv_b64: base64,
+                        worksheet_name: worksheetName,
+                        header_date: headerDate,
+                        composite_label: compositeLabel,
+                        set_label: setLabel,
+                        sheet_id: sheetId
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText);
+                }
+
+                showStatus('Processing complete! Downloading file...', 'info');
+
+                // Download file
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `${worksheetName}.xlsx`;
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+                document.body.removeChild(a);
+
+                showStatus('✓ Excel file downloaded successfully!', 'success');
+
+            } catch (error) {
+                console.error('Error:', error);
+                showStatus(`Error: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Generate Audit Report';
+            }
+        }
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => {
+                    const base64 = reader.result.split(',')[1];
+                    resolve(base64);
+                };
+                reader.onerror = error => reject(error);
+            });
+        }
+    </script>
+</body>
+</html>
