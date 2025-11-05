@@ -123,7 +123,7 @@
             font-size: 0.95rem;
         }
 
-        input[type="text"] {
+        select, input[type="text"], input[type="number"] {
             width: 100%;
             padding: 0.85rem;
             border: 2px solid #d1dce3;
@@ -131,9 +131,10 @@
             font-size: 1rem;
             transition: border-color 0.3s;
             font-family: inherit;
+            background: white;
         }
 
-        input[type="text"]:focus {
+        select:focus, input[type="text"]:focus, input[type="number"]:focus {
             outline: none;
             border-color: #3d7a9e;
         }
@@ -265,7 +266,7 @@
         <!-- Main Card -->
         <div class="card">
             <h1>Composite Audit Report Generator</h1>
-            <p class="subtitle">Upload your CSV file and generate CWC style composite reports</p>
+            <p class="subtitle">Upload your CSV file and generate CWC formatted audit reports</p>
         </div>
 
         <!-- File Upload -->
@@ -294,27 +295,51 @@
             <h2>2. Audit Parameters</h2>
             
             <div class="form-group">
-                <label for="worksheetName">Worksheet Name *</label>
-                <input type="text" id="worksheetName" placeholder="e.g., Audit Practice Cloud Ver">
-                <div class="help-text">Name for the generated worksheet</div>
+                <label for="monthRange">Month Range *</label>
+                <select id="monthRange">
+                    <option value="">-- Select Month Range --</option>
+                    <option value="1/31 to 2/28">January to February (1/31 to 2/28)</option>
+                    <option value="2/28 to 3/31">February to March (2/28 to 3/31)</option>
+                    <option value="3/31 to 4/30">March to April (3/31 to 4/30)</option>
+                    <option value="4/30 to 5/31">April to May (4/30 to 5/31)</option>
+                    <option value="5/31 to 6/30">May to June (5/31 to 6/30)</option>
+                    <option value="6/30 to 7/31">June to July (6/30 to 7/31)</option>
+                    <option value="7/31 to 8/31">July to August (7/31 to 8/31)</option>
+                    <option value="8/31 to 9/30">August to September (8/31 to 9/30)</option>
+                    <option value="9/30 to 10/31">September to October (9/30 to 10/31)</option>
+                    <option value="10/31 to 11/30">October to November (10/31 to 11/30)</option>
+                    <option value="11/30 to 12/31">November to December (11/30 to 12/31)</option>
+                    <option value="12/31 to 1/31">December to January (12/31 to 1/31)</option>
+                </select>
+                <div class="help-text">Select the month range for the audit</div>
             </div>
 
             <div class="form-group">
-                <label for="headerDate">Header Date *</label>
-                <input type="text" id="headerDate" placeholder="e.g., October 30, 2025">
-                <div class="help-text">Date to display in the report header</div>
+                <label for="indexReturn">Index Return *</label>
+                <input type="number" id="indexReturn" placeholder="e.g., 3.21746" step="0.00001">
+                <div class="help-text">5-decimal return value (e.g., 3.21746 for 3.21746%)</div>
             </div>
 
             <div class="form-group">
-                <label for="compositeLabel">Composite Label *</label>
-                <input type="text" id="compositeLabel" placeholder="e.g., Large Cap Diversified Composite">
-                <div class="help-text">Label for the composite</div>
-            </div>
-
-            <div class="form-group">
-                <label for="bottomHighlightLabel">Bottom Highlight Label *</label>
-                <input type="text" id="bottomHighlightLabel" placeholder="e.g., Set: Small-Cap Diversified Composite">
-                <div class="help-text">Label for the bottom highlight section</div>
+                <label for="indexType">Index Type *</label>
+                <select id="indexType">
+                    <option value="">-- Select Index Type --</option>
+                    <option value="Russell 2000">Russell 2000</option>
+                    <option value="Russell 1000 Value">Russell 1000 Value</option>
+                    <option value="Russell 1000 Growth">Russell 1000 Growth</option>
+                    <option value="Russell 3000">Russell 3000</option>
+                    <option value="S&P 500">S&P 500</option>
+                    <option value="MSCI ACWI ex USA Index">MSCI ACWI ex USA Index</option>
+                    <option value="3 Month T-Bill Yield">3 Month T-Bill Yield</option>
+                    <option value="50% S&P 500 / 50% Russell 2000">50% S&P 500 / 50% Russell 2000</option>
+                    <option value="*35% MSCI USA ESG/25% MSCI EAFE ESG/40% Bloomberg Barclays Global Aggregate Bond Index">*35% MSCI USA ESG/25% MSCI EAFE ESG/40% Bloomberg Barclays Global Aggregate Bond Index</option>
+                    <option value="*30% S&P 500/15% Russell 2000/15%MSCI EAFE/40% Bloomberg Barclays US Aggregate Bond Index">*30% S&P 500/15% Russell 2000/15%MSCI EAFE/40% Bloomberg Barclays US Aggregate Bond Index</option>
+                    <option value="JH Agg Growth & Inc 80/20">JH Agg Growth & Inc 80/20</option>
+                    <option value="JH Diversified Growth 90/10">JH Diversified Growth 90/10</option>
+                    <option value="JH Moderate 60/40">JH Moderate 60/40</option>
+                    <option value="JH Conservative 20/80">JH Conservative 20/80</option>
+                </select>
+                <div class="help-text">Select the benchmark index type</div>
             </div>
 
             <button class="btn btn-primary" id="generateBtn" onclick="generateAudit()">
@@ -332,6 +357,7 @@
     <script>
         const API_URL = 'https://cwc-audit-api-729567585923.us-central1.run.app';
         const API_TOKEN = 'CWC_Audit_Key_1';
+        const SHEET_ID = '1dfKeAYcfRvxrEu-ZQHy-PVL8_6hcyjq2BD5KE50cxVY';
         
         let csvFile = null;
 
@@ -421,14 +447,17 @@
                 return;
             }
 
-            const worksheetName = document.getElementById('worksheetName').value.trim();
-            const headerDate = document.getElementById('headerDate').value.trim();
-            const compositeLabel = document.getElementById('compositeLabel').value.trim();
-            const setLabel = document.getElementById('bottomHighlightLabel').value.trim();
-            const sheetId = '1dfKeAYcfRvxrEu-ZQHy-PVL8_6hcyjq2BD5KE50cxVY'; // Hardcoded
+            const monthRange = document.getElementById('monthRange').value;
+            const indexReturn = parseFloat(document.getElementById('indexReturn').value);
+            const indexType = document.getElementById('indexType').value;
 
-            if (!worksheetName || !headerDate || !compositeLabel || !setLabel) {
+            if (!monthRange || !indexReturn || !indexType) {
                 showStatus('Please fill in all required fields', 'error');
+                return;
+            }
+
+            if (isNaN(indexReturn)) {
+                showStatus('Index return must be a valid number', 'error');
                 return;
             }
 
@@ -445,7 +474,7 @@
 
                 showStatus('Sending request to API...', 'info');
 
-                // Call API
+                // Call API with new parameters
                 const response = await fetch(`${API_URL}/audit/inline`, {
                     method: 'POST',
                     headers: {
@@ -454,11 +483,10 @@
                     },
                     body: JSON.stringify({
                         csv_b64: base64,
-                        worksheet_name: worksheetName,
-                        header_date: headerDate,
-                        composite_label: compositeLabel,
-                        set_label: setLabel,
-                        sheet_id: sheetId
+                        month_range: monthRange,
+                        index_return: indexReturn,
+                        index_type: indexType,
+                        sheet_id: SHEET_ID
                     })
                 });
 
@@ -469,12 +497,23 @@
 
                 showStatus('Processing complete! Downloading file...', 'info');
 
-                // Download file
+                // Extract filename from Content-Disposition header
+                const contentDisposition = response.headers.get('Content-Disposition');
+                let filename = 'audit.xlsx'; // Default fallback
+                
+                if (contentDisposition) {
+                    const filenameMatch = contentDisposition.match(/filename="(.+)"/);
+                    if (filenameMatch && filenameMatch[1]) {
+                        filename = filenameMatch[1];
+                    }
+                }
+
+                // Download file with the correct filename
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
                 a.href = url;
-                a.download = `${worksheetName}.xlsx`;
+                a.download = filename;
                 document.body.appendChild(a);
                 a.click();
                 window.URL.revokeObjectURL(url);
