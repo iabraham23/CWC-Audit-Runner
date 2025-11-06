@@ -10,4 +10,5 @@ Required CSV columns:
 - Ending Value
 - Gross Performance %
 - Account Number
-- Account Start Date 
+- Account Start Date
+- Model 
