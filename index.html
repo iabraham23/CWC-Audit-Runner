@@ -44,6 +44,47 @@
             font-style: italic;
         }
 
+        /* Tab Navigation */
+        .tab-navigation {
+            background: white;
+            border-radius: 2px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            margin-bottom: 1.5rem;
+            display: flex;
+            overflow: hidden;
+        }
+
+        .tab-button {
+            flex: 1;
+            padding: 1.2rem;
+            background: white;
+            border: none;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 500;
+            color: #666;
+            transition: all 0.3s;
+            border-bottom: 3px solid transparent;
+        }
+
+        .tab-button:hover {
+            background: #f8fafb;
+        }
+
+        .tab-button.active {
+            color: #2c5f7d;
+            border-bottom-color: #3d7a9e;
+            background: #f8fafb;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
         .card {
             background: white;
             border-radius: 2px;
@@ -123,7 +164,7 @@
             font-size: 0.95rem;
         }
 
-        select, input[type="text"], input[type="number"] {
+        select, input[type="text"], input[type="number"], textarea {
             width: 100%;
             padding: 0.85rem;
             border: 2px solid #d1dce3;
@@ -134,7 +175,12 @@
             background: white;
         }
 
-        select:focus, input[type="text"]:focus, input[type="number"]:focus {
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        select:focus, input[type="text"]:focus, input[type="number"]:focus, textarea:focus {
             outline: none;
             border-color: #3d7a9e;
         }
@@ -253,6 +299,43 @@
             font-size: 0.9rem;
             font-weight: 300;
         }
+
+        /* Inspire-specific styles */
+        .ticker-input-area {
+            background: #f8fafb;
+            border: 2px solid #d1dce3;
+            border-radius: 2px;
+            padding: 2rem;
+        }
+
+        .ticker-pills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin-top: 1rem;
+            min-height: 40px;
+        }
+
+        .ticker-pill {
+            background: #3d7a9e;
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 500;
+        }
+
+        .ticker-pill-remove {
+            cursor: pointer;
+            font-weight: bold;
+            opacity: 0.8;
+        }
+
+        .ticker-pill-remove:hover {
+            opacity: 1;
+        }
     </style>
 </head>
 <body>
@@ -263,90 +346,135 @@
             <div class="tagline">Audit Interface by Ishan Abraham</div>
         </div>
 
-        <!-- Main Card -->
-        <div class="card">
-            <h1>Composite Audit Report Generator</h1>
-            <p class="subtitle">Upload your CSV file and generate CWC formatted audit reports</p>
-        </div>
-
-        <!-- File Upload -->
-        <div class="card">
-            <h2>1. Upload CSV File</h2>
-            <div class="upload-zone" id="uploadZone">
-                <div class="upload-icon">📊</div>
-                <p style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #2c5f7d;">Click to upload or drag and drop</p>
-                <p style="color: #777; font-size: 0.9rem;">CSV files only</p>
-                <input type="file" id="fileInput" accept=".csv" style="display: none;">
-            </div>
-            
-            <div id="fileInfo" class="file-info hidden">
-                <div>
-                    <strong id="fileName" style="color: #2c5f7d;"></strong>
-                    <div style="font-size: 0.875rem; color: #777;" id="fileSize"></div>
-                </div>
-                <button class="btn-secondary" onclick="clearFile()">Clear</button>
-            </div>
-
-            <div id="csvPreview" class="csv-preview hidden"></div>
-        </div>
-
-        <!-- Parameters Form -->
-        <div class="card">
-            <h2>2. Audit Parameters</h2>
-            
-            <div class="form-group">
-                <label for="monthRange">Month Range *</label>
-                <select id="monthRange">
-                    <option value="">-- Select Month Range --</option>
-                    <option value="1/31 to 2/28">January to February (1/31 to 2/28)</option>
-                    <option value="2/28 to 3/31">February to March (2/28 to 3/31)</option>
-                    <option value="3/31 to 4/30">March to April (3/31 to 4/30)</option>
-                    <option value="4/30 to 5/31">April to May (4/30 to 5/31)</option>
-                    <option value="5/31 to 6/30">May to June (5/31 to 6/30)</option>
-                    <option value="6/30 to 7/31">June to July (6/30 to 7/31)</option>
-                    <option value="7/31 to 8/31">July to August (7/31 to 8/31)</option>
-                    <option value="8/31 to 9/30">August to September (8/31 to 9/30)</option>
-                    <option value="9/30 to 10/31">September to October (9/30 to 10/31)</option>
-                    <option value="10/31 to 11/30">October to November (10/31 to 11/30)</option>
-                    <option value="11/30 to 12/31">November to December (11/30 to 12/31)</option>
-                    <option value="12/31 to 1/31">December to January (12/31 to 1/31)</option>
-                </select>
-                <div class="help-text">Select the month range for the audit</div>
-            </div>
-
-            <div class="form-group">
-                <label for="indexReturn">Index Return *</label>
-                <input type="number" id="indexReturn" placeholder="e.g., 3.21746" step="0.00001">
-                <div class="help-text">5-decimal return value (e.g., 3.21746 for 3.21746%)</div>
-            </div>
-
-            <div class="form-group">
-                <label for="indexType">Index Type *</label>
-                <select id="indexType">
-                    <option value="">-- Select Index Type --</option>
-                    <option value="Russell 2000">Russell 2000</option>
-                    <option value="Russell 1000 Value">Russell 1000 Value</option>
-                    <option value="Russell 1000 Growth">Russell 1000 Growth</option>
-                    <option value="Russell 3000">Russell 3000</option>
-                    <option value="S&P 500">S&P 500</option>
-                    <option value="MSCI ACWI ex USA Index">MSCI ACWI ex USA Index</option>
-                    <option value="3 Month T-Bill Yield">3 Month T-Bill Yield</option>
-                    <option value="50% S&P 500 / 50% Russell 2000">50% S&P 500 / 50% Russell 2000</option>
-                    <option value="*35% MSCI USA ESG/25% MSCI EAFE ESG/40% Bloomberg Barclays Global Aggregate Bond Index">*35% MSCI USA ESG/25% MSCI EAFE ESG/40% Bloomberg Barclays Global Aggregate Bond Index</option>
-                    <option value="*30% S&P 500/15% Russell 2000/15%MSCI EAFE/40% Bloomberg Barclays US Aggregate Bond Index">*30% S&P 500/15% Russell 2000/15%MSCI EAFE/40% Bloomberg Barclays US Aggregate Bond Index</option>
-                    <option value="JH Agg Growth & Inc 80/20">JH Agg Growth & Inc 80/20</option>
-                    <option value="JH Diversified Growth 90/10">JH Diversified Growth 90/10</option>
-                    <option value="JH Moderate 60/40">JH Moderate 60/40</option>
-                    <option value="JH Conservative 20/80">JH Conservative 20/80</option>
-                </select>
-                <div class="help-text">Select the benchmark index type</div>
-            </div>
-
-            <button class="btn btn-primary" id="generateBtn" onclick="generateAudit()">
-                Generate Audit Report
+        <!-- Tab Navigation -->
+        <div class="tab-navigation">
+            <button class="tab-button active" onclick="switchTab('audit')">
+                Audit Reports
             </button>
+            <button class="tab-button" onclick="switchTab('inspire')">
+                Inspire Reports
+            </button>
+        </div>
 
-            <div id="status" class="hidden"></div>
+        <!-- AUDIT TAB (Existing functionality) -->
+        <div id="audit-tab" class="tab-content active">
+            <!-- Main Card -->
+            <div class="card">
+                <h1>Composite Audit Report Generator</h1>
+                <p class="subtitle">Upload your CSV file and generate CWC formatted audit reports</p>
+            </div>
+
+            <!-- File Upload -->
+            <div class="card">
+                <h2>1. Upload CSV File</h2>
+                <div class="upload-zone" id="uploadZone">
+                    <div class="upload-icon">📊</div>
+                    <p style="font-size: 1.1rem; margin-bottom: 0.5rem; color: #2c5f7d;">Click to upload or drag and drop</p>
+                    <p style="color: #777; font-size: 0.9rem;">CSV files only</p>
+                    <input type="file" id="fileInput" accept=".csv" style="display: none;">
+                </div>
+                
+                <div id="fileInfo" class="file-info hidden">
+                    <div>
+                        <strong id="fileName" style="color: #2c5f7d;"></strong>
+                        <div style="font-size: 0.875rem; color: #777;" id="fileSize"></div>
+                    </div>
+                    <button class="btn-secondary" onclick="clearFile()">Clear</button>
+                </div>
+
+                <div id="csvPreview" class="csv-preview hidden"></div>
+            </div>
+
+            <!-- Parameters Form -->
+            <div class="card">
+                <h2>2. Audit Parameters</h2>
+                
+                <div class="form-group">
+                    <label for="monthRange">Month Range *</label>
+                    <select id="monthRange">
+                        <option value="">-- Select Month Range --</option>
+                        <option value="1/31 to 2/28">January to February (1/31 to 2/28)</option>
+                        <option value="2/28 to 3/31">February to March (2/28 to 3/31)</option>
+                        <option value="3/31 to 4/30">March to April (3/31 to 4/30)</option>
+                        <option value="4/30 to 5/31">April to May (4/30 to 5/31)</option>
+                        <option value="5/31 to 6/30">May to June (5/31 to 6/30)</option>
+                        <option value="6/30 to 7/31">June to July (6/30 to 7/31)</option>
+                        <option value="7/31 to 8/31">July to August (7/31 to 8/31)</option>
+                        <option value="8/31 to 9/30">August to September (8/31 to 9/30)</option>
+                        <option value="9/30 to 10/31">September to October (9/30 to 10/31)</option>
+                        <option value="10/31 to 11/30">October to November (10/31 to 11/30)</option>
+                        <option value="11/30 to 12/31">November to December (11/30 to 12/31)</option>
+                        <option value="12/31 to 1/31">December to January (12/31 to 1/31)</option>
+                    </select>
+                    <div class="help-text">Select the month range for the audit</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="indexReturn">Index Return *</label>
+                    <input type="number" id="indexReturn" placeholder="e.g., 3.21746" step="0.00001">
+                    <div class="help-text">5-decimal return value (e.g., 3.21746 for 3.21746%)</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="indexType">Index Type *</label>
+                    <select id="indexType">
+                        <option value="">-- Select Index Type --</option>
+                        <option value="Russell 2000">Russell 2000</option>
+                        <option value="Russell 1000 Value">Russell 1000 Value</option>
+                        <option value="Russell 1000 Growth">Russell 1000 Growth</option>
+                        <option value="Russell 3000">Russell 3000</option>
+                        <option value="S&P 500">S&P 500</option>
+                        <option value="MSCI ACWI ex USA Index">MSCI ACWI ex USA Index</option>
+                        <option value="3 Month T-Bill Yield">3 Month T-Bill Yield</option>
+                        <option value="50% S&P 500 / 50% Russell 2000">50% S&P 500 / 50% Russell 2000</option>
+                        <option value="*35% MSCI USA ESG/25% MSCI EAFE ESG/40% Bloomberg Barclays Global Aggregate Bond Index">*35% MSCI USA ESG/25% MSCI EAFE ESG/40% Bloomberg Barclays Global Aggregate Bond Index</option>
+                        <option value="*30% S&P 500/15% Russell 2000/15%MSCI EAFE/40% Bloomberg Barclays US Aggregate Bond Index">*30% S&P 500/15% Russell 2000/15%MSCI EAFE/40% Bloomberg Barclays US Aggregate Bond Index</option>
+                        <option value="JH Agg Growth & Inc 80/20">JH Agg Growth & Inc 80/20</option>
+                        <option value="JH Diversified Growth 90/10">JH Diversified Growth 90/10</option>
+                        <option value="JH Moderate 60/40">JH Moderate 60/40</option>
+                        <option value="JH Conservative 20/80">JH Conservative 20/80</option>
+                    </select>
+                    <div class="help-text">Select the benchmark index type</div>
+                </div>
+
+                <button class="btn btn-primary" id="generateBtn" onclick="generateAudit()">
+                    Generate Audit Report
+                </button>
+
+                <div id="status" class="hidden"></div>
+            </div>
+        </div>
+
+        <!-- INSPIRE TAB (New functionality) -->
+        <div id="inspire-tab" class="tab-content">
+            <!-- Main Card -->
+            <div class="card">
+                <h1>Inspire Impact Report Generator</h1>
+                <p class="subtitle">Generate comparison reports for multiple stock tickers</p>
+            </div>
+
+            <!-- Ticker Input -->
+            <div class="card">
+                <h2>Enter Stock Tickers</h2>
+                
+                <div class="form-group">
+                    <label for="tickerInput">Stock Tickers *</label>
+                    <textarea 
+                        id="tickerInput" 
+                        placeholder="Enter tickers separated by commas (e.g., AAPL, MSFT, GOOGL, AMZN)"
+                        rows="3"
+                    ></textarea>
+                    <div class="help-text">Enter up to 20 ticker symbols, separated by commas</div>
+                </div>
+
+                <div class="ticker-pills" id="tickerPills"></div>
+
+                <button class="btn btn-primary" id="generateInspireBtn" onclick="generateInspireReport()">
+                    Generate Inspire Report
+                </button>
+
+                <div id="inspireStatus" class="hidden"></div>
+            </div>
         </div>
 
         <div class="footer">
@@ -360,6 +488,27 @@
         const SHEET_ID = '1dfKeAYcfRvxrEu-ZQHy-PVL8_6hcyjq2BD5KE50cxVY';
         
         let csvFile = null;
+
+        // ========================================================================
+        // TAB SWITCHING
+        // ========================================================================
+        function switchTab(tabName) {
+            // Update tab buttons
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`${tabName}-tab`).classList.add('active');
+        }
+
+        // ========================================================================
+        // AUDIT TAB - EXISTING FUNCTIONALITY (UNCHANGED)
+        // ========================================================================
 
         // Upload zone interactions
         const uploadZone = document.getElementById('uploadZone');
@@ -540,6 +689,122 @@
                 };
                 reader.onerror = error => reject(error);
             });
+        }
+
+        // ========================================================================
+        // INSPIRE TAB - NEW FUNCTIONALITY
+        // ========================================================================
+
+        // Update ticker pills as user types
+        document.getElementById('tickerInput').addEventListener('input', (e) => {
+            updateTickerPills();
+        });
+
+        function updateTickerPills() {
+            const input = document.getElementById('tickerInput').value;
+            const tickers = input.split(',')
+                .map(t => t.trim().toUpperCase())
+                .filter(t => t.length > 0);
+            
+            const pillsContainer = document.getElementById('tickerPills');
+            pillsContainer.innerHTML = '';
+            
+            tickers.forEach(ticker => {
+                const pill = document.createElement('div');
+                pill.className = 'ticker-pill';
+                pill.innerHTML = `
+                    ${ticker}
+                    <span class="ticker-pill-remove" onclick="removeTicker('${ticker}')">×</span>
+                `;
+                pillsContainer.appendChild(pill);
+            });
+        }
+
+        function removeTicker(tickerToRemove) {
+            const input = document.getElementById('tickerInput');
+            const tickers = input.value.split(',')
+                .map(t => t.trim().toUpperCase())
+                .filter(t => t !== tickerToRemove);
+            input.value = tickers.join(', ');
+            updateTickerPills();
+        }
+
+        function showInspireStatus(message, type) {
+            const statusDiv = document.getElementById('inspireStatus');
+            statusDiv.className = `status status-${type}`;
+            
+            let icon = '';
+            if (type === 'info') icon = '<div class="spinner"></div>';
+            else if (type === 'success') icon = '✓';
+            else if (type === 'error') icon = '✗';
+            
+            statusDiv.innerHTML = `${icon} <span>${message}</span>`;
+            statusDiv.classList.remove('hidden');
+        }
+
+        function hideInspireStatus() {
+            document.getElementById('inspireStatus').classList.add('hidden');
+        }
+
+        async function generateInspireReport() {
+            const input = document.getElementById('tickerInput').value;
+            const tickers = input.split(',')
+                .map(t => t.trim().toUpperCase())
+                .filter(t => t.length > 0);
+
+            // Validation
+            if (tickers.length === 0) {
+                showInspireStatus('Please enter at least one ticker', 'error');
+                return;
+            }
+
+            if (tickers.length > 20) {
+                showInspireStatus('Maximum 20 tickers allowed', 'error');
+                return;
+            }
+
+            // Disable button
+            const btn = document.getElementById('generateInspireBtn');
+            btn.disabled = true;
+            btn.textContent = 'Generating Report...';
+
+            try {
+                showInspireStatus(`Fetching data for ${tickers.length} companies...`, 'info');
+
+                const response = await fetch(`${API_URL}/inspire/report`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${API_TOKEN}`
+                    },
+                    body: JSON.stringify({
+                        tickers: tickers,
+                        region: 'US'
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    throw new Error(errorText);
+                }
+
+                showInspireStatus('Report generated! Opening in new window...', 'success');
+
+                // Get HTML and open in new window
+                const html = await response.text();
+                const newWindow = window.open();
+                newWindow.document.write(html);
+                newWindow.document.close();
+
+                showInspireStatus('✓ Report opened successfully!', 'success');
+
+            } catch (error) {
+                console.error('Error:', error);
+                showInspireStatus(`Error: ${error.message}`, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.textContent = 'Generate Inspire Report';
+            }
         }
     </script>
 </body>
