@@ -3,8 +3,7 @@
 This repo manages the live website to run automations for CWC Advisors @ https://cwc-audit-runner.netlify.app/ 
 
 
-Composite Audit Report Generator
-
+Composite Audit Report Generator:
 Input composite CSV's from Orion and download an excel sheet of a CWC style composite
 
 Required CSV columns: 
@@ -17,7 +16,6 @@ Required CSV columns:
 - Account Start Date
 - Model 
 
-Inspire Impact Report Generator
-
+Inspire Impact Report Generator:
 Input tickers (up to 50 at a time) and generate a report using Inspire Insight information
 
