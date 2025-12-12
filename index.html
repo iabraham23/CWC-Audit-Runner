@@ -343,7 +343,7 @@
         <!-- Header with Logo -->
         <div class="header-logo">
             <div class="logo-text">CWC Advisors</div>
-            <div class="tagline">Audit Interface by Ishan Abraham</div>
+            <div class="tagline">Automation Interface by Ishan Abraham</div>
         </div>
 
         <!-- Tab Navigation -->
@@ -356,7 +356,7 @@
             </button>
         </div>
 
-        <!-- AUDIT TAB (Existing functionality) -->
+        <!-- AUDIT TAB  -->
         <div id="audit-tab" class="tab-content active">
             <!-- Main Card -->
             <div class="card">
@@ -445,12 +445,12 @@
             </div>
         </div>
 
-        <!-- INSPIRE TAB (New functionality) -->
+        <!-- INSPIRE TAB -->
         <div id="inspire-tab" class="tab-content">
             <!-- Main Card -->
             <div class="card">
                 <h1>Inspire Impact Report Generator</h1>
-                <p class="subtitle">Generate comparison reports for multiple stock tickers</p>
+                <p class="subtitle">Generate comparison reports from Inspire Insight for multiple stock tickers</p>
             </div>
 
             <!-- Ticker Input -->
@@ -464,7 +464,7 @@
                         placeholder="Enter tickers separated by commas (e.g., AAPL, MSFT, GOOGL, AMZN)"
                         rows="3"
                     ></textarea>
-                    <div class="help-text">Enter up to 20 ticker symbols, separated by commas</div>
+                    <div class="help-text">Enter up to 50 ticker symbols, separated by commas</div>
                 </div>
 
                 <div class="ticker-pills" id="tickerPills"></div>
@@ -488,10 +488,6 @@
         const SHEET_ID = '1dfKeAYcfRvxrEu-ZQHy-PVL8_6hcyjq2BD5KE50cxVY';
         
         let csvFile = null;
-
-        // ========================================================================
-        // TAB SWITCHING
-        // ========================================================================
         function switchTab(tabName) {
             // Update tab buttons
             document.querySelectorAll('.tab-button').forEach(btn => {
@@ -507,7 +503,7 @@
         }
 
         // ========================================================================
-        // AUDIT TAB - EXISTING FUNCTIONALITY (UNCHANGED)
+        // AUDIT TAB
         // ========================================================================
 
         // Upload zone interactions
@@ -657,7 +653,7 @@
                     }
                 }
 
-                // Download file with the correct filename
+                // Download file 
                 const blob = await response.blob();
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement('a');
@@ -692,7 +688,7 @@
         }
 
         // ========================================================================
-        // INSPIRE TAB - NEW FUNCTIONALITY
+        // INSPIRE TAB 
         // ========================================================================
 
         // Update ticker pills as user types
