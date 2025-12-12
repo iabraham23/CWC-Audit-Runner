@@ -343,7 +343,7 @@
         <!-- Header with Logo -->
         <div class="header-logo">
             <div class="logo-text">CWC Advisors</div>
-            <div class="tagline">Automation Interface by Ishan Abraham</div>
+            <div class="tagline">Audit Interface by Ishan Abraham</div>
         </div>
 
         <!-- Tab Navigation -->
@@ -356,7 +356,7 @@
             </button>
         </div>
 
-        <!-- AUDIT TAB  -->
+        <!-- AUDIT TAB (Existing functionality) -->
         <div id="audit-tab" class="tab-content active">
             <!-- Main Card -->
             <div class="card">
@@ -445,12 +445,12 @@
             </div>
         </div>
 
-        <!-- INSPIRE TAB -->
+        <!-- INSPIRE TAB (New functionality) -->
         <div id="inspire-tab" class="tab-content">
             <!-- Main Card -->
             <div class="card">
                 <h1>Inspire Impact Report Generator</h1>
-                <p class="subtitle">Generate comparison reports from Inspire Insight for multiple stock tickers</p>
+                <p class="subtitle">Generate comparison reports for multiple stock tickers</p>
             </div>
 
             <!-- Ticker Input -->
@@ -461,10 +461,10 @@
                     <label for="tickerInput">Stock Tickers *</label>
                     <textarea 
                         id="tickerInput" 
-                        placeholder="Enter tickers separated by commas (e.g., AAPL, MSFT, GOOGL, AMZN)"
+                        placeholder="Enter tickers separated by commas or spaces (e.g., AAPL MSFT GOOGL)"
                         rows="3"
                     ></textarea>
-                    <div class="help-text">Enter up to 50 ticker symbols, separated by commas</div>
+                    <div class="help-text">Enter up to 50 ticker symbols, separated by commas or spaces</div>
                 </div>
 
                 <div class="ticker-pills" id="tickerPills"></div>
@@ -488,6 +488,10 @@
         const SHEET_ID = '1dfKeAYcfRvxrEu-ZQHy-PVL8_6hcyjq2BD5KE50cxVY';
         
         let csvFile = null;
+
+        // ========================================================================
+        // TAB SWITCHING
+        // ========================================================================
         function switchTab(tabName) {
             // Update tab buttons
             document.querySelectorAll('.tab-button').forEach(btn => {
@@ -503,7 +507,7 @@
         }
 
         // ========================================================================
-        // AUDIT TAB
+        // AUDIT TAB - EXISTING FUNCTIONALITY (UNCHANGED)
         // ========================================================================
 
         // Upload zone interactions
@@ -698,7 +702,8 @@
 
         function updateTickerPills() {
             const input = document.getElementById('tickerInput').value;
-            const tickers = input.split(',')
+            // Split by comma OR space, filter empty
+            const tickers = input.replace(/,/g, ' ').split(/\s+/)
                 .map(t => t.trim().toUpperCase())
                 .filter(t => t.length > 0);
             
@@ -718,7 +723,8 @@
 
         function removeTicker(tickerToRemove) {
             const input = document.getElementById('tickerInput');
-            const tickers = input.value.split(',')
+            // Split by comma OR space
+            const tickers = input.value.replace(/,/g, ' ').split(/\s+/)
                 .map(t => t.trim().toUpperCase())
                 .filter(t => t !== tickerToRemove);
             input.value = tickers.join(', ');
@@ -744,7 +750,8 @@
 
         async function generateInspireReport() {
             const input = document.getElementById('tickerInput').value;
-            const tickers = input.split(',')
+            // Split by comma OR space
+            const tickers = input.replace(/,/g, ' ').split(/\s+/)
                 .map(t => t.trim().toUpperCase())
                 .filter(t => t.length > 0);
 
@@ -754,8 +761,8 @@
                 return;
             }
 
-            if (tickers.length > 20) {
-                showInspireStatus('Maximum 20 tickers allowed', 'error');
+            if (tickers.length > 50) {
+                showInspireStatus('Maximum 50 tickers allowed', 'error');
                 return;
             }
 
