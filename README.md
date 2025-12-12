@@ -4,6 +4,7 @@ This repo manages the live website to run automations for CWC Advisors @ https:/
 
 
 Composite Audit Report Generator
+
 Input composite CSV's from Orion and download an excel sheet of a CWC style composite
 
 Required CSV columns: 
@@ -17,5 +18,6 @@ Required CSV columns:
 - Model 
 
 Inspire Impact Report Generator
+
 Input tickers (up to 50 at a time) and generate a report using Inspire Insight information
 
